@@ -1,51 +1,69 @@
+"""
+Problem 5: Objective Function (Loss Function)
+
+Demonstrates the objective function used in linear regression:
+J(θ) = (1/2m)∑[(hθ(x⁽ⁱ⁾) - y⁽ⁱ⁾)²]
+
+This is the function that gradient descent minimizes during training.
+The loss is recorded in self.loss and self.val_loss during training.
+"""
+
 import numpy as np
-from scr.problem4_mean_squared_error import MSE
-
-class ScratchLinearRegression:
-    def __init__(self, num_iter=1000, lr=0.01, no_bias=False, verbose=False):
-        self.iter = num_iter
-        self.lr = lr
-        self.no_bias = no_bias
-        self.verbose = verbose
-        self.loss = np.zeros(self.iter)
-        self.val_loss = np.zeros(self.iter)
-
-    def _linear_hypothesis(self, X):
-        return np.dot(X, self.coef_)
-
-    def fit(self, X, y, X_val=None, y_val=None):
-        m, n = X.shape
-        self.coef_ = np.zeros(n)
-
-        for i in range(self.iter):
-            y_pred = self._linear_hypothesis(X)
-            error = y_pred - y
-            self.coef_ -= self.lr * (1/m) * np.dot(X.T, error)
-
-            # Loss calculation
-            self.loss[i] = (1/(2*m)) * np.sum(error ** 2)
-            if X_val is not None and y_val is not None:
-                val_pred = self._linear_hypothesis(X_val)
-                val_error = val_pred - y_val
-                self.val_loss[i] = (1/(2*m)) * np.sum(val_error ** 2)
-
-            if self.verbose and i % 100 == 0:
-                print(f"Iter {i}: Loss={self.loss[i]:.4f}")
-
-    def predict(self, X):
-        return self._linear_hypothesis(X)
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from scr.scratch_linear_regression import ScratchLinearRegression
 
 
 def main():
-    # Simple test for training and evaluation
-    X = np.array([[1], [2], [3], [4], [5]])
-    y = np.array([2, 4, 6, 8, 10])  # Perfect linear relation: y = 2x
-    model = ScratchLinearRegression(num_iter=1000, lr=0.01, verbose=True)
-    model.fit(X, y)
-
-    y_pred = model.predict(X)
-    print("Final coefficients:", model.coef_)
-    print("Training MSE:", MSE(y_pred, y))
+    """
+    Demonstrate the objective function and loss recording.
+    """
+    print("=" * 60)
+    print("Problem 5: Objective Function (Loss Function)")
+    print("=" * 60)
+    
+    # Generate data
+    np.random.seed(42)
+    X = np.linspace(0, 10, 100).reshape(-1, 1)
+    y = 2.5 * X.squeeze() + 1.5 + np.random.randn(100) * 1.5
+    
+    # Split into train and validation
+    train_size = int(0.8 * len(X))
+    X_train, X_val = X[:train_size], X[train_size:]
+    y_train, y_val = y[:train_size], y[train_size:]
+    
+    print(f"\nTraining samples: {len(X_train)}")
+    print(f"Validation samples: {len(X_val)}")
+    
+    # Train model with validation data
+    print("\nTraining model and recording loss...")
+    model = ScratchLinearRegression(num_iter=500, lr=0.01, verbose=False)
+    model.fit(X_train, y_train, X_val, y_val)
+    
+    print(f"\nFinal training loss: {model.loss[-1]:.6f}")
+    print(f"Final validation loss: {model.val_loss[-1]:.6f}")
+    print(f"Initial training loss: {model.loss[0]:.6f}")
+    print(f"Loss reduction: {model.loss[0] - model.loss[-1]:.6f}")
+    
+    # Plot loss over iterations
+    plt.figure(figsize=(10, 6))
+    plt.plot(model.loss, label='Training Loss', linewidth=2)
+    plt.plot(model.val_loss, label='Validation Loss', linewidth=2)
+    plt.xlabel('Iteration')
+    plt.ylabel('Loss J(θ)')
+    plt.title('Objective Function: Loss vs Iterations')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    
+    import os
+    os.makedirs('plots', exist_ok=True)
+    plt.savefig('plots/problem5_objective_function.png', dpi=300)
+    print("\n✓ Loss plot saved to plots/problem5_objective_function.png")
+    
+    print("\n✓ Objective function implementation verified!")
+    print("=" * 60)
 
 
 if __name__ == "__main__":

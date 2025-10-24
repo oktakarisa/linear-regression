@@ -35,10 +35,12 @@ PROBLEMS = [
 ]
 
 def main():
-    print("\n🔹 Starting Scratch Linear Regression Assignment Runner 🔹\n")
+    print("\n" + "="*60)
+    print("Starting Scratch Linear Regression Assignment Runner")
+    print("="*60 + "\n")
     print(f"Python version: {sys.version.split()[0]}")
     print(f"Working directory: {os.getcwd()}")
-    print("------------------------------------------------------------\n")
+    print("-"*60 + "\n")
 
     for script_name in tqdm(PROBLEMS, desc="Running Problems"):
         try:
@@ -46,20 +48,20 @@ def main():
             module = importlib.import_module(module_path)
 
             if hasattr(module, "main"):
-                print(f"\n▶ Running {script_name}.py ...")
+                print(f"\n> Running {script_name}.py ...")
                 module.main()
-                print(f"✅ Completed: {script_name}\n")
+                print(f"[OK] Completed: {script_name}\n")
             else:
-                print(f"⚠️  Skipped {script_name}: no main() function found.\n")
+                print(f"[SKIP] {script_name}: no main() function found.\n")
 
         except ModuleNotFoundError:
-            print(f"❌ {script_name}.py not found — skipping.\n")
+            print(f"[ERROR] {script_name}.py not found - skipping.\n")
         except Exception as e:
-            print(f"💥 Error running {script_name}: {e}\n")
+            print(f"[ERROR] Error running {script_name}: {e}\n")
 
-    print("------------------------------------------------------------")
-    print("🎯 All available problem scripts processed successfully.")
-    print("📊 Check the 'plots' folder for generated figures.\n")
+    print("-"*60)
+    print("All available problem scripts processed successfully.")
+    print("Check the 'plots' folder for generated figures.\n")
 
 if __name__ == "__main__":
     main()

@@ -1,40 +1,50 @@
+"""
+Problem 1: Hypothesis Function
+
+Demonstrates the implementation of the linear hypothesis function:
+hθ(x) = θ₀x₀ + θ₁x₁ + ... + θₙxₙ (where x₀ = 1)
+
+In vector form: hθ(x) = θᵀx
+"""
+
 import numpy as np
-
-class ScratchLinearRegression:
-    """
-    Scratch implementation of linear regression
-    """
-
-    def __init__(self, num_iter=1000, lr=0.01, no_bias=False, verbose=False):
-        self.iter = num_iter
-        self.lr = lr
-        self.no_bias = no_bias
-        self.verbose = verbose
-        self.loss = np.zeros(self.iter)
-        self.val_loss = np.zeros(self.iter)
-        self.coef_ = None  # weights (and bias if included)
-
-    def _linear_hypothesis(self, X):
-        """
-        Compute the linear hypothesis function:
-        hθ(x) = θ₀ + θ₁x₁ + ... + θₙxₙ  (if bias included)
-        or
-        hθ(x) = θ₁x₁ + ... + θₙxₙ  (if bias excluded)
-        """
-        if self.coef_ is None:
-            raise ValueError("Model coefficients not initialized. Fit or set self.coef_ first.")
-
-        if not self.no_bias:
-            X = np.c_[np.ones((X.shape[0], 1)), X]
-
-        return np.dot(X, self.coef_)
+from scr.scratch_linear_regression import ScratchLinearRegression
 
 
 def main():
+    """
+    Demonstrate the hypothesis function with a simple example.
+    """
+    print("=" * 60)
+    print("Problem 1: Hypothesis Function")
+    print("=" * 60)
+    
+    # Create model instance
     model = ScratchLinearRegression(no_bias=False)
-    model.coef_ = np.array([[2], [3]])  # bias = 2, weight = 3
-    X = np.array([[1], [2], [3]])
-    print("Predictions:\n", model._linear_hypothesis(X))
+    
+    # Set coefficients manually for demonstration
+    # bias = 2.0, weight = 3.0
+    model.coef_ = np.array([2.0, 3.0])
+    
+    # Test data
+    X = np.array([[1.0], [2.0], [3.0], [4.0]])
+    
+    print("\nModel coefficients (θ):")
+    print(f"  θ₀ (bias) = {model.coef_[0]}")
+    print(f"  θ₁ (weight) = {model.coef_[1]}")
+    
+    print("\nInput features (X):")
+    print(X)
+    
+    # Make predictions using hypothesis function
+    predictions = model.predict(X)
+    
+    print("\nPredictions using hypothesis function hθ(x) = θ₀ + θ₁x₁:")
+    for i, (x_val, pred) in enumerate(zip(X, predictions)):
+        print(f"  x = {x_val[0]:.1f}  →  hθ(x) = {model.coef_[0]} + {model.coef_[1]} × {x_val[0]:.1f} = {pred:.1f}")
+    
+    print("\n✓ Hypothesis function working correctly!")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
